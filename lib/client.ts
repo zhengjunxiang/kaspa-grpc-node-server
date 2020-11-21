@@ -14,7 +14,6 @@ export class Client {
 	stream:IStream;
 	options:any;
 	pending:PendingReqs;
-	address:string = 'localhost:16210';
 	intakeHandler:Function|undefined;
 	reconnect:boolean = true;
 	client:any|undefined;
@@ -23,15 +22,10 @@ export class Client {
 
 	constructor(options:any) {
 		this.options = Object.assign({
-			protoPath: __dirname + '/../messages.proto'
+			protoPath: __dirname + '/../messages.proto',
+			host: 'localhost:16210'
 		}, options||{});
 		this.pending = { };
-		if(this.options.address)
-			this.setAddress(this.options.address)
-	}
-
-	setAddress(address:string) {
-		this.address = address;
 	}
 
 	getServiceClient():ServiceClientConstructor {
@@ -51,9 +45,9 @@ export class Client {
 
 	connect() {
 		this.reconnect = true;
-		console.log('gRPC connecting to',this.address);
+		console.log('gRPC connecting to', this.options.host);
 		const RPC = this.getServiceClient();
-		this.client = new RPC(this.address, gRPC.credentials.createInsecure(),
+		this.client = new RPC(this.options.host, gRPC.credentials.createInsecure(),
 			{ 
 				// "grpc.keepalive_timeout_ms": 25000 
 			}
