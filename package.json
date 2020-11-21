@@ -1,0 +1,22 @@
+{
+  "name": "kaspa-module-node",
+  "version": "0.0.1",
+  "description": "Node RPC for kaspa-module",
+  "main": "dist/index.js",
+  "author": "Denis.S",
+  "license": "ISC",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "prepare": "npm run build"
+  },
+  "dependencies": {
+    "@grpc/grpc-js": "*",
+    "@grpc/proto-loader": "*",
+    "@aspectron/flow-async": "file:../flow-async"
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.9",
+    "typescript": "^4.0.5"
+  }
+}
