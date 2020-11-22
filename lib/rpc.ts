@@ -20,8 +20,8 @@ export class RPC implements IRPC{
 	getAddressTransactions(address:string, limit:number, skip:number): Promise<Api.Transaction[]>{
 		return this.request('getAddressTransactions', {address, limit, skip}) as Promise<Api.Transaction[]>;
 	}
-	getUtxos(address:string, limit:number, skip:number): Promise<Api.Utxo[]>{
-		return this.request('getUTXOsByAddressRequest', {address, limit, skip}) as  Promise<Api.Utxo[]>;
+	getUtxos(address:string, limit:number, skip:number): Promise<Api.UTXOsByAddressResponse>{
+		return this.request('getUTXOsByAddressRequest', {address, limit, skip}) as Promise<Api.UTXOsByAddressResponse>;
 	}
 	postTx(transactionHex: string): Promise<Api.SuccessResponse>{
 		return this.request('submitTransactionRequest', {transactionHex}) as  Promise<Api.SuccessResponse>;
