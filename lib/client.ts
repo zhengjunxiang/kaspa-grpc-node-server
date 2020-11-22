@@ -19,13 +19,19 @@ export class Client {
 	client:any|undefined;
 	reconnect_dpc:number|undefined;
 	verbose:boolean = false;
+	log:Function;
 
 	constructor(options:any) {
 		this.options = Object.assign({
-			protoPath: __dirname + '/../messages.proto',
+			protoPath: __dirname + '/../../messages.proto',
 			host: 'localhost:16210'
 		}, options||{});
 		this.pending = { };
+		this.log = Function.prototype.bind.call(
+			console.log,
+			console,
+			`[KASPA-RPC-CLIENT]:`
+		);
 	}
 
 	getServiceClient():ServiceClientConstructor {
@@ -45,7 +51,7 @@ export class Client {
 
 	connect() {
 		this.reconnect = true;
-		console.log('gRPC connecting to', this.options.host);
+		this.log('gRPC Client connecting to', this.options.host);
 		const RPC = this.getServiceClient();
 		this.client = new RPC(this.options.host, gRPC.credentials.createInsecure(),
 			{ 
@@ -71,7 +77,7 @@ export class Client {
 			}
 		}
 		this.stream.on('error', (error:any) => {
-			console.error('gRPC',error);
+			this.log('stream:error', error);
 			reconnect();
 		})
 		this.stream.on('end', () => {
@@ -145,21 +151,21 @@ export class Client {
 		let req = {
 			[name]:args
 		}
-		this.verbose && console.log('post:',req);
+		this.verbose && this.log('post:',req);
 		this.stream.write(req);
 
 		return true;
 	}
 
 	call(method:string, data:any) {
-		this.verbose && console.log('call to', method);
+		this.verbose && this.log('call to', method);
 		if(!this.client)
 			return Promise.reject('not connected');
 
 		return new Promise((resolve, reject) => {
 			let stream = this.stream;
 			if(!stream) {
-				console.log('could not create stream');
+				this.log('could not create stream');
 				return reject('not connected');
 			}
 

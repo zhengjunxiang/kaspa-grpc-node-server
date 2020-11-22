@@ -8,6 +8,7 @@ export class RPC implements IRPC{
 			this.client = options.client;
 		}else{
 			this.client = new Client(options.clientConfig||{});
+			this.client.connect();
 		}
 	}
 	request(method:string, data:any){

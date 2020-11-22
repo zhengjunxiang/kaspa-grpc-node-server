@@ -8,6 +8,7 @@ export declare class Client {
     client: any | undefined;
     reconnect_dpc: number | undefined;
     verbose: boolean;
+    log: Function;
     constructor(options: any);
     getServiceClient(): ServiceClientConstructor;
     connect(): void;
