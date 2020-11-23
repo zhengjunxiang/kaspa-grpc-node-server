@@ -6,7 +6,7 @@ import * as gRPC from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
 import {
 	PendingReqs, IData, IStream, QueueItem, MessagesProto,
-	ServiceClientConstructor
+	ServiceClientConstructor, KaspadPackage
 } from '../types/custom-types';
 
 
@@ -20,6 +20,7 @@ export class Client {
 	reconnect_dpc:number|undefined;
 	verbose:boolean = false;
 	log:Function;
+	proto:KaspadPackage|undefined;
 
 	constructor(options:any) {
 		this.options = Object.assign({
@@ -45,13 +46,14 @@ export class Client {
 		});
 
 		const proto:MessagesProto = <MessagesProto>gRPC.loadPackageDefinition(packageDefinition);
+		this.proto = proto.protowire;
 		const {P2P, RPC} = proto.protowire;
 		return RPC;
 	}
 
 	connect() {
 		this.reconnect = true;
-		this.log('gRPC Client connecting to', this.options.host);
+		this.verbose && this.log('gRPC Client connecting to', this.options.host);
 		const RPC = this.getServiceClient();
 		this.client = new RPC(this.options.host, gRPC.credentials.createInsecure(),
 			{ 
@@ -77,7 +79,7 @@ export class Client {
 			}
 		}
 		this.stream.on('error', (error:any) => {
-			this.log('stream:error', error);
+			this.verbose && this.log('stream:error', error);
 			reconnect();
 		})
 		this.stream.on('end', () => {
@@ -165,7 +167,7 @@ export class Client {
 		return new Promise((resolve, reject) => {
 			let stream = this.stream;
 			if(!stream) {
-				this.log('could not create stream');
+				this.verbose &&  this.log('could not create stream');
 				return reject('not connected');
 			}
 

@@ -3,6 +3,7 @@ import { IRPC, Api } from '../types/custom-types';
 export declare class RPC implements IRPC {
     client: Client;
     constructor(options?: any);
+    disconnect(): void;
     request(method: string, data: any): Promise<unknown>;
     getBlock(hash: string): Promise<Api.BlockResponse>;
     getAddressTransactions(address: string, limit: number, skip: number): Promise<Api.Transaction[]>;

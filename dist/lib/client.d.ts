@@ -1,4 +1,4 @@
-import { PendingReqs, IData, IStream, ServiceClientConstructor } from '../types/custom-types';
+import { PendingReqs, IData, IStream, ServiceClientConstructor, KaspadPackage } from '../types/custom-types';
 export declare class Client {
     stream: IStream;
     options: any;
@@ -9,6 +9,7 @@ export declare class Client {
     reconnect_dpc: number | undefined;
     verbose: boolean;
     log: Function;
+    proto: KaspadPackage | undefined;
     constructor(options: any);
     getServiceClient(): ServiceClientConstructor;
     connect(): void;

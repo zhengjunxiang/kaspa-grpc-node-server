@@ -11,6 +11,9 @@ export class RPC implements IRPC{
 			this.client.connect();
 		}
 	}
+	disconnect(){
+		this.client?.disconnect();
+	}
 	request(method:string, data:any){
 		return this.client.call(method, data);
 	}
