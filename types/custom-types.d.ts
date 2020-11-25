@@ -27,7 +27,7 @@ export interface MessagesProto extends GrpcObject{
 
 export namespace Api {
   interface Utxo {
-    transactionId: string;
+    txID: string;
     value: number;
     scriptPubKey: string;
     acceptingBlockHash: string;

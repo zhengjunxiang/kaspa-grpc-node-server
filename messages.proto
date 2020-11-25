@@ -11,9 +11,9 @@ message KaspadMessage {
     RequestBlockLocatorMessage requestBlockLocator = 4;
     BlockLocatorMessage blockLocator = 5;
     RequestAddressesMessage requestAddresses = 6;
-    RequestIBDBlocksMessage requestIBDBlocks = 7;
-    RequestNextIBDBlocksMessage requestNextIBDBlocks = 8;
-    DoneIBDBlocksMessage DoneIBDBlocks = 9;
+    RequestHeadersMessage requestHeaders = 7;
+    RequestNextHeadersMessage requestNextHeaders = 8;
+    DoneHeadersMessage DoneHeaders = 9;
     RequestRelayBlocksMessage requestRelayBlocks = 10;
     RequestSelectedTipMessage requestSelectedTip = 11;
     RequestTransactionsMessage requestTransactions = 12;
@@ -27,6 +27,11 @@ message KaspadMessage {
     VersionMessage version = 20;
     TransactionNotFoundMessage transactionNotFound = 21;
     RejectMessage reject = 22;
+    BlockHeaderMessage blockHeader = 23;
+    RequestIBDRootUTXOSetAndBlockMessage requestIBDRootUTXOSetAndBlock = 24;
+    IBDRootUTXOSetAndBlockMessage ibdRootUTXOSetAndBlock = 25;
+    RequestIBDBlocksMessage requestIBDBlocks = 26;
+    IBDRootNotFoundMessage ibdRootNotFound = 27;
 
     GetCurrentNetworkRequestMessage getCurrentNetworkRequest = 1001;
     GetCurrentNetworkResponseMessage getCurrentNetworkResponse = 1002;
@@ -84,6 +89,8 @@ message KaspadMessage {
     UTXOOfAddressChangedNotificationMessage utxoOfAddressChangedNotification = 1054;
     GetUTXOsByAddressRequestMessage getUTXOsByAddressRequest = 1055;
     GetUTXOsByAddressResponseMessage getUTXOsByAddressResponse = 1056;
+    GetTransactionsByAddressesRequestMessage getTransactionsByAddressesRequest = 1057;
+    GetTransactionsByAddressesResponseMessage getTransactionsByAddressesResponse = 1058;
   }
 }
 
@@ -91,31 +98,29 @@ message KaspadMessage {
 // P2P                                                                     //
 /////////////////////////////////////////////////////////////////////////////
 
+// RequestAddressesMessage start
+message RequestAddressesMessage{
+  bool includeAllSubnetworks = 1;
+  SubnetworkId subnetworkId = 2;
+}
+// RequestAddressesMessage end
+
 // AddressesMessage start
 message AddressesMessage{
-  bool includeAllSubnetworks = 1;
-  SubnetworkID subnetworkID = 2;
-  repeated NetAddress addressList = 3;
+  repeated NetAddress addressList = 1;
 }
 
 message NetAddress{
-  int64  timestamp = 1;
+  int64 timestamp = 1;
   uint64 services = 2;
   bytes ip = 3;
   uint32 port = 4;
 }
 
-message SubnetworkID{
+message SubnetworkId{
   bytes bytes = 1;
 }
 // AddressesMessage end
-
-// GetAddressesMessage start
-message RequestAddressesMessage{
-  bool includeAllSubnetworks = 1;
-  SubnetworkID subnetworkID = 2;
-}
-// GetAddressesMessage end
 
 // TransactionMessage start
 message TransactionMessage{
@@ -123,44 +128,44 @@ message TransactionMessage{
   repeated TransactionInput inputs = 2;
   repeated TransactionOutput outputs = 3;
   uint64 lockTime = 4;
-  SubnetworkID subnetworkID = 5;
+  SubnetworkId subnetworkId = 5;
   uint64 gas = 6;
   Hash payloadHash = 7;
-  bytes Payload = 8;
+  bytes payload = 8;
 }
 
 message TransactionInput{
-  Outpoint PreviousOutpoint = 1;
-  bytes SignatureScript = 2;
-  uint64 Sequence = 3;
+  Outpoint previousOutpoint = 1;
+  bytes signatureScript = 2;
+  uint64 sequence = 3;
 }
 
 message Outpoint{
-  TransactionID transactionID = 1;
+  TransactionId transactionId = 1;
   uint32 index = 2;
 }
 
-message TransactionID{
+message TransactionId{
   bytes bytes = 1;
 }
 
 message TransactionOutput{
   uint64 value = 1;
-  bytes ScriptPubKey = 2;
+  bytes scriptPubKey = 2;
 }
 // TransactionMessage end
 
 // BlockMessage start
 message BlockMessage{
-  BlockHeader header = 1;
+  BlockHeaderMessage header = 1;
   repeated TransactionMessage transactions = 2;
 }
 
-message BlockHeader{
+message BlockHeaderMessage{
   int32 version = 1;
   repeated Hash parentHashes = 2;
   Hash hashMerkleRoot = 3;
-  Hash acceptedIDMerkleRoot = 4;
+  Hash acceptedIdMerkleRoot = 4;
   Hash utxoCommitment = 5;
   int64 timestamp = 6;
   uint32 bits = 7;
@@ -186,27 +191,27 @@ message BlockLocatorMessage{
 // BlockLocatorMessage end
 
 // GetBlocksMessage start
-message RequestIBDBlocksMessage{
+message RequestHeadersMessage{
   Hash lowHash = 1;
   Hash highHash = 2;
 }
 // GetBlocksMessage end
 
 // RequestNextIBDBlocksMessage start
-message RequestNextIBDBlocksMessage{
+message RequestNextHeadersMessage{
 }
 // RequestNextIBDBlocksMessage end
 
 // DoneIBDBlocksMessage start
-message DoneIBDBlocksMessage{
+message DoneHeadersMessage{
 }
 // DoneIBDBlocksMessage end
 
-// GetRelayBlocksMessage start
+// RequestRelayBlocksMessage start
 message RequestRelayBlocksMessage{
   repeated Hash hashes = 1;
 }
-// GetRelayBlocksMessage end
+// RequestRelayBlocksMessage end
 
 // GetSelectedTipMessage start
 message RequestSelectedTipMessage{
@@ -215,13 +220,13 @@ message RequestSelectedTipMessage{
 
 // RequestTransactionsMessage start
 message RequestTransactionsMessage {
-  repeated TransactionID ids = 1;
+  repeated TransactionId ids = 1;
 }
 // GetTransactionsMessage end
 
 // TransactionNotFoundMessage start
 message TransactionNotFoundMessage{
-  TransactionID id = 1;
+  TransactionId id = 1;
 }
 // TransactionsNotFoundMessage end
 
@@ -233,7 +238,7 @@ message InvRelayBlockMessage{
 
 // InvTransactionMessage start
 message InvTransactionsMessage{
-  repeated TransactionID ids = 1;
+  repeated TransactionId ids = 1;
 }
 // InvTransactionMessage end
 
@@ -270,7 +275,7 @@ message VersionMessage{
   string userAgent = 6;
   Hash selectedTipHash = 7;
   bool disableRelayTx = 8;
-  SubnetworkID subnetworkID = 9;
+  SubnetworkId subnetworkId = 9;
   string network = 10;
 }
 // VersionMessage end
@@ -280,6 +285,30 @@ message RejectMessage{
   string reason = 1;
 }
 // RejectMessage end
+
+// RequestIBDRootUTXOSetAndBlockMessage start
+message RequestIBDRootUTXOSetAndBlockMessage{
+  Hash ibdRoot = 1;
+}
+// RequestIBDRootUTXOSetAndBlockMessage end
+
+// IBDRootUTXOSetAndBlockMessage start
+message IBDRootUTXOSetAndBlockMessage{
+  bytes utxoSet = 1;
+  BlockMessage block = 2;
+}
+// IBDRootUTXOSetAndBlockMessage end
+
+// RequestIBDBlocksMessage start
+message RequestIBDBlocksMessage{
+  repeated Hash hashes = 1;
+}
+// RequestIBDBlocksMessage end
+
+// IBDRootNotFoundMessage start
+message IBDRootNotFoundMessage{
+}
+// IBDRootNotFoundMessage end
 
 service P2P {
   rpc MessageStream (stream KaspadMessage) returns (stream KaspadMessage) {}
@@ -302,7 +331,7 @@ message GetCurrentNetworkResponseMessage{
 }
 
 message SubmitBlockRequestMessage{
-  string blockHex = 1;
+  BlockMessage block = 1;
 }
 
 message SubmitBlockResponseMessage{
@@ -311,37 +340,12 @@ message SubmitBlockResponseMessage{
 
 message GetBlockTemplateRequestMessage{
   string payAddress = 1;
-  string longPollId = 2;
 }
 
 message GetBlockTemplateResponseMessage{
-  string bits = 1;
-  int64 currentTime = 2;
-  repeated string parentHashes = 3;
-  int32 massLimit = 4;
-  repeated GetBlockTemplateTransactionMessage transactions = 5;
-  string hashMerkleRoot = 6;
-  string acceptedIDMerkleRoot = 7;
-  string utxoCommitment = 8;
-  int32 version = 9;
-  string longPollId = 10;
-  string targetDifficulty = 11;
-  int64 minTime = 12;
-  int64 maxTime = 13;
-  repeated string mutableFields = 14;
-  string nonceRange = 15;
-  bool isSynced = 16;
-  bool isConnected = 17;
+  BlockMessage blockMessage = 1;
 
   RPCError error = 1000;
-}
-
-message GetBlockTemplateTransactionMessage{
-  string data = 1;
-  string id = 2;
-  repeated int64 depends = 3;
-  uint64 mass = 4;
-  uint64 fee = 5;
 }
 
 message NotifyBlockAddedRequestMessage{
@@ -433,7 +437,7 @@ message AddPeerResponseMessage{
 }
 
 message SubmitTransactionRequestMessage{
-  string transactionHex = 1;
+  TransactionMessage transaction = 1;
 }
 
 message SubmitTransactionResponseMessage{
@@ -466,59 +470,47 @@ message AcceptedBlock{
 message GetBlockRequestMessage{
   string hash = 1;
   string subnetworkId = 2;
-  bool includeBlockHex = 3;
-  bool includeBlockVerboseData = 4;
-  bool includeTransactionVerboseData = 5;
+  bool includeTransactionVerboseData = 3;
 }
 
 message GetBlockResponseMessage{
   string blockHash = 1;
-  string blockHex = 2;
-  BlockVerboseData blockVerboseData = 3;
+  BlockVerboseData blockVerboseData = 2;
   RPCError error = 1000;
 }
 
 message BlockVerboseData{
   string hash = 1;
-  uint64 confirmations = 2;
-  int32 size = 3;
-  uint64 blueScore = 4;
-  bool isChainBlock = 5;
-  int32 version = 6;
-  string versionHex = 7;
-  string hashMerkleRoot = 8;
-  string acceptedIDMerkleRoot = 9;
-  string utxoCommitment = 10;
-  repeated string transactionHex = 11;
-  repeated TransactionVerboseData transactionVerboseData = 12;
-  int64 time = 13;
-  uint64 nonce = 14;
-  string bits = 15;
-  double difficulty = 16;
-  repeated string parentHashes = 17;
-  string selectedParentHash = 18;
-  repeated string childHashes = 19;
-  repeated string acceptedBlockHashes = 20;
+  int32 version = 2;
+  string versionHex = 3;
+  string hashMerkleRoot = 4;
+  string acceptedIDMerkleRoot = 5;
+  string utxoCommitment = 6;
+  repeated TransactionVerboseData transactionVerboseData = 7;
+  int64 time = 8;
+  uint64 nonce = 9;
+  string bits = 10;
+  double difficulty = 11;
+  repeated string parentHashes = 12;
+  string selectedParentHash = 13;
+  repeated string transactionIDs = 14;
 }
 
 message TransactionVerboseData{
-  string hex = 1;
-  string txId = 2;
-  string hash = 3;
-  int32 size = 4;
-  int32 version = 5;
-  uint64 lockTime = 6;
-  string subnetworkId = 7;
-  uint64 gas = 8;
-  string payloadHash = 9;
-  string payload = 10;
-  repeated TransactionVerboseInput transactionVerboseInputs = 11;
-  repeated TransactionVerboseOutput transactionVerboseOutputs = 12;
-  string blockHash = 13;
-  string acceptedBy = 14;
-  bool isInMempool = 15;
-  uint64 time = 16;
-  uint64 blockTime = 17;
+  string txId = 1;
+  string hash = 2;
+  uint64 size = 3;
+  int32 version = 4;
+  uint64 lockTime = 5;
+  string subnetworkId = 6;
+  uint64 gas = 7;
+  string payloadHash = 8;
+  string payload = 9;
+  repeated TransactionVerboseInput transactionVerboseInputs = 10;
+  repeated TransactionVerboseOutput transactionVerboseOutputs = 11;
+  string blockHash = 12;
+  uint64 time = 13;
+  uint64 blockTime = 14;
 }
 
 message TransactionVerboseInput{
@@ -644,7 +636,7 @@ message GetHeadersResponseMessage{
 }
 
 message NotifyTransactionAddedRequestMessage{
-  TransactionMessage transaction = 1;
+  repeated string addresses = 1;
 }
 
 message NotifyTransactionAddedResponseMessage{
@@ -652,7 +644,11 @@ message NotifyTransactionAddedResponseMessage{
 }
 
 message TransactionAddedNotificationMessage{
-  TransactionMessage transaction = 1;
+  repeated string addresses = 1;
+  string blockHash = 2;
+  repeated UTXOVerboseData utxosVerboseData = 3;
+  TransactionMessage transaction = 4;
+  uint32 status = 5;
 }
 
 message NotifyUTXOOfAddressChangedRequestMessage{
@@ -672,6 +668,8 @@ message UTXOVerboseData{
   bytes scriptPubKey = 2;
   uint64 blockBlueScore = 3;
   bool isCoinbase = 4;
+  string txID = 5;
+  uint32 index = 6;
 }
 
 message GetUTXOsByAddressRequestMessage{
@@ -681,6 +679,17 @@ message GetUTXOsByAddressRequestMessage{
 message GetUTXOsByAddressResponseMessage{
   string address = 1;
   repeated UTXOVerboseData utxosVerboseData = 2;
+  RPCError error = 1000;
+}
+
+message GetTransactionsByAddressesRequestMessage{
+  string startingBlockHash = 1;
+  repeated string addresses = 2;
+}
+
+message GetTransactionsByAddressesResponseMessage{
+  string lasBlockScanned = 1;
+  repeated TransactionVerboseData transactions = 2;
   RPCError error = 1000;
 }
 
