@@ -58,6 +58,7 @@ export class Client {
 		this.client = new RPC(this.options.host, gRPC.credentials.createInsecure(),
 			{ 
 				// "grpc.keepalive_timeout_ms": 25000 
+				"grpc.max_receive_message_length": -1
 			}
 		);
 
