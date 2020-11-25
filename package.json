@@ -1,7 +1,7 @@
 {
-  "name": "kaspa-module-node",
+  "name": "kaspa-wallet-grpc-node",
   "version": "0.0.1",
-  "description": "Node RPC for kaspa-module",
+  "description": "Node gRPC for kaspa-wallet",
   "main": "dist/index.js",
   "author": "Denis.S",
   "license": "ISC",
