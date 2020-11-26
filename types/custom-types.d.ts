@@ -1,5 +1,6 @@
 import {GrpcObject, ServiceClientConstructor} from '@grpc/grpc-js/build/src/make-client';
 export {ServiceClientConstructor};
+export type bytes = string;//base84 string
 
 export interface QueueItem{
   method:string,
@@ -75,6 +76,53 @@ export namespace Api {
     mass: number;
   }
 
+  interface Hash{
+    bytes:bytes
+  }
+
+  interface TransactionRequest{
+    transaction:TransactionRequestTx
+  }
+  interface TransactionResponse{
+    txId:string;
+    error:RPCError;
+  }
+
+  interface TransactionRequestTx{
+    version:number;
+    inputs:TransactionRequestTxInput[];
+    outputs:TransactionRequestTxOutput[];
+    lockTime:number;
+    subnetworkId:SubnetworkId;
+    gas?:number;
+    payloadHash?:Hash;
+    payload?:bytes;
+  }
+
+  interface TransactionRequestTxInput{
+    previousOutpoint:Outpoint;
+    signatureScript:bytes;
+    sequence:number;
+  }
+
+  interface Outpoint{
+    transactionId:TransactionId
+    index:number
+  }
+
+  interface TransactionId{
+    bytes:bytes;
+  }
+
+  interface TransactionRequestTxOutput{
+    value:number;
+    scriptPubKey:bytes;
+  }
+
+  interface TransactionId{
+    bytes:bytes;
+  }
+
   interface TransactionInput {
     previousTransactionId: string;
     previousTransactionOutputIndex: string;
@@ -113,7 +161,8 @@ export interface IRPC {
   getBlock(blockHash:string): Promise<Api.BlockResponse>;
   getAddressTransactions(address:string, limit:number, skip:number): Promise<Api.Transaction[]>;
   getUtxos(address:string, limit:number, skip:number): Promise<Api.UTXOsByAddressResponse>;
-  postTx(rawTransaction: string): Promise<Api.SuccessResponse>;
+  postTx(tx: Api.TransactionRequest): Promise<Api.TransactionResponse>;
+  request?(method:string, data:any);
 }
 
 
