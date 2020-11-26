@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Node gRPC for kaspa-wallet",
   "main": "dist/index.js",
-  "author": "Denis.S",
+  "author": "",
   "license": "ISC",
   "scripts": {
     "build": "tsc",
@@ -13,7 +13,7 @@
   "dependencies": {
     "@grpc/grpc-js": "*",
     "@grpc/proto-loader": "*",
-    "@aspectron/flow-async": "*"
+    "@aspectron/flow-async": "^0.0.10"
   },
   "devDependencies": {
     "@types/node": "^14.14.9",
