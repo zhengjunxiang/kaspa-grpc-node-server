@@ -83,7 +83,8 @@ export class Client {
 			this.verbose && this.log('stream:error', error);
 			reconnect();
 		})
-		this.stream.on('end', () => {
+		this.stream.on('end', (...args:any) => {
+			this.verbose && this.log('stream:end', ...args);
 			reconnect();
 		})
 	}
@@ -115,11 +116,13 @@ export class Client {
 			return null;
 		const stream = this.client.MessageStream(()=>{
 		});
+		//console.log("stream", stream)
 		return stream;
 	}
 
 	initIntake(stream:IStream) {
 		stream.on('data', (data:any) => {
+			//this.log("stream:data", data)
 			if(data.payload) {
 				let name = data.payload;
 				let payload = data[name];
