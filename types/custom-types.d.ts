@@ -97,6 +97,7 @@ export namespace Api {
     gas?:number;
     payloadHash?:Hash;
     payload?:bytes;
+    fee:number;
   }
 
   interface TransactionRequestTxInput{
