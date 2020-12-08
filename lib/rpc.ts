@@ -1,5 +1,5 @@
 import {Client} from './client';
-import {IRPC, Api} from '../types/custom-types';
+import {IRPC, RPC as Rpc} from '../types/custom-types';
 
 export class RPC implements IRPC{
 	client:Client;
@@ -17,16 +17,18 @@ export class RPC implements IRPC{
 	request(method:string, data:any){
 		return this.client.call(method, data);
 	}
-	getBlock(hash:string): Promise<Api.BlockResponse>{
-		return this.request('getBlockRequest', {hash, includeBlockVerboseData:true}) as Promise<Api.BlockResponse>;
+	getBlock(hash:string): Promise<Rpc.BlockResponse>{
+		return this.request('getBlockRequest', {hash, includeBlockVerboseData:true}) as Promise<Rpc.BlockResponse>;
 	}
-	getAddressTransactions(address:string, limit:number, skip:number): Promise<Api.Transaction[]>{
-		return this.request('getAddressTransactions', {address, limit, skip}) as Promise<Api.Transaction[]>;
+	getTransactionsByAddresses(startingBlockHash:string, addresses:string[]): Promise<Rpc.TransactionsByAddressesResponse>{
+		return this.request('getTransactionsByAddressesRequest', {
+			startingBlockHash, addresses
+		}) as Promise<Rpc.TransactionsByAddressesResponse>;
 	}
-	getUtxos(address:string, limit:number, skip:number): Promise<Api.UTXOsByAddressResponse>{
-		return this.request('getUTXOsByAddressRequest', {address, limit, skip}) as Promise<Api.UTXOsByAddressResponse>;
+	getUTXOsByAddress(addresses:string[]): Promise<Rpc.UTXOsByAddressesResponse>{
+		return this.request('getUTXOsByAddressRequest', {addresses}) as Promise<Rpc.UTXOsByAddressesResponse>;
 	}
-	postTx(tx: Api.TransactionRequest): Promise<Api.TransactionResponse>{
-		return this.request('submitTransactionRequest', tx) as Promise<Api.TransactionResponse>;
+	submitTransaction(tx: Rpc.SubmitTransactionRequest): Promise<Rpc.SubmitTransactionResponse>{
+		return this.request('submitTransactionRequest', tx) as Promise<Rpc.SubmitTransactionResponse>;
 	}
 }
