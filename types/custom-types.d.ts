@@ -27,4 +27,11 @@ export interface MessagesProto extends GrpcObject{
     protowire: KaspadPackage
 }
 
+export interface SubscriberItem{
+  uid:string;
+  callback:function;
+}
+
+export declare type SubscriberItemMap = Map<string, SubscriberItem[]>;
+
 

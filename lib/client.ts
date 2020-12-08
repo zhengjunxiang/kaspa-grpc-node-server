@@ -6,10 +6,11 @@ import * as gRPC from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
 import {
 	PendingReqs, IData, IStream, QueueItem, MessagesProto,
-	ServiceClientConstructor, KaspadPackage
+	ServiceClientConstructor, KaspadPackage, SubscriberItem, SubscriberItemMap,
+	RPC as Rpc
 } from '../types/custom-types';
 
-
+ 
 export class Client {
 	stream:IStream;
 	options:any;
@@ -21,6 +22,7 @@ export class Client {
 	verbose:boolean = false;
 	log:Function;
 	proto:KaspadPackage|undefined;
+	subscribers: SubscriberItemMap = new Map();
 
 	constructor(options:any) {
 		this.options = Object.assign({
@@ -143,6 +145,13 @@ export class Client {
 				if(pending)
 					pending.resolve(o.payload);
 			}
+
+			let subscribers:SubscriberItem[]|undefined = this.subscribers.get(o.name);
+			if(subscribers){
+				subscribers.map(subscriber=>{
+					subscriber.callback(o.payload)
+				})
+			}
 		}
 	}
 
@@ -183,6 +192,34 @@ export class Client {
 
 			this.post(method, data);
 		})
+	}
+
+	subscribe<T>(subject:string, data:any={}, callback:Function):Rpc.SubPromise<T>{
+		if(typeof data == 'function'){
+			callback = data;
+			data = {};
+		}
+
+		this.verbose && this.log('subscribe to', subject);
+		if(!this.client)
+			return Promise.reject('not connected') as Rpc.SubPromise<T>;
+
+		let eventName = subject.replace("notify", "").replace("Request", "Notification")
+		eventName = eventName[0].toLowerCase()+eventName.substr(1);
+		console.log("subscribe:eventName", eventName)
+
+		let subscribers:SubscriberItem[]|undefined = this.subscribers.get(eventName);
+		if(!subscribers){
+			subscribers = [];
+			this.subscribers.set(eventName, subscribers);
+		}
+		let uid = (Math.random()*100000 + Date.now()).toFixed(0);
+		subscribers.push({uid, callback});
+
+		let p = this.call(subject, data) as Rpc.SubPromise<T>;
+
+		p.uid = uid;
+		return p;
 	}
 
 }

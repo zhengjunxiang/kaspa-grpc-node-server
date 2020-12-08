@@ -14,21 +14,32 @@ export class RPC implements IRPC{
 	disconnect(){
 		this.client?.disconnect();
 	}
-	request(method:string, data:any){
-		return this.client.call(method, data);
+
+	subscribe<T>(method:string, data:any, callback:Function){
+		return this.client.subscribe<T>(method, data, callback);
 	}
-	getBlock(hash:string): Promise<Rpc.BlockResponse>{
-		return this.request('getBlockRequest', {hash, includeBlockVerboseData:true}) as Promise<Rpc.BlockResponse>;
+	request<T>(method:string, data:any){
+		return this.client.call(method, data) as Promise<T>;
 	}
-	getTransactionsByAddresses(startingBlockHash:string, addresses:string[]): Promise<Rpc.TransactionsByAddressesResponse>{
-		return this.request('getTransactionsByAddressesRequest', {
+	subscribeChainChanged(data:any, callback:Function){
+		return this.subscribe<Rpc.NotifyChainChangedResponse>("notifyChainChangedRequest", data, callback);
+	}
+	subscribeBlockAdded(data:any, callback:Function){
+		return this.subscribe<Rpc.NotifyBlockAddedResponse>("notifyBlockAddedRequest", data, callback);
+	}
+
+	getBlock(hash:string){
+		return this.request<Rpc.BlockResponse>('getBlockRequest', {hash, includeBlockVerboseData:true});
+	}
+	getTransactionsByAddresses(startingBlockHash:string, addresses:string[]){
+		return this.request<Rpc.TransactionsByAddressesResponse>('getTransactionsByAddressesRequest', {
 			startingBlockHash, addresses
-		}) as Promise<Rpc.TransactionsByAddressesResponse>;
+		});
 	}
-	getUTXOsByAddress(addresses:string[]): Promise<Rpc.UTXOsByAddressesResponse>{
-		return this.request('getUTXOsByAddressRequest', {addresses}) as Promise<Rpc.UTXOsByAddressesResponse>;
+	getUTXOsByAddress(addresses:string[]){
+		return this.request<Rpc.UTXOsByAddressesResponse>('getUTXOsByAddressRequest', {addresses});
 	}
-	submitTransaction(tx: Rpc.SubmitTransactionRequest): Promise<Rpc.SubmitTransactionResponse>{
-		return this.request('submitTransactionRequest', tx) as Promise<Rpc.SubmitTransactionResponse>;
+	submitTransaction(tx: Rpc.SubmitTransactionRequest){
+		return this.request<Rpc.SubmitTransactionResponse>('submitTransactionRequest', tx);
 	}
 }
