@@ -11,9 +11,7 @@
     "prepare": "npm run build"
   },
   "dependencies": {
-    "@grpc/grpc-js": "*",
-    "@grpc/proto-loader": "*",
-    "@aspectron/flow-async": "^0.0.10"
+    "kaspa-grpc": "aspectron/kaspa-grpc"
   },
   "devDependencies": {
     "@types/node": "^14.14.9",
