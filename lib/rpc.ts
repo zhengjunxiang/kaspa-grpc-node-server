@@ -36,8 +36,8 @@ export class RPC implements IRPC{
 			startingBlockHash, addresses
 		});
 	}
-	getUTXOsByAddress(addresses:string[]){
-		return this.request<Rpc.UTXOsByAddressesResponse>('getUTXOsByAddressRequest', {addresses});
+	getUtxosByAddresses(addresses:string[]){
+		return this.request<Rpc.UTXOsByAddressesResponse>('getUtxosByAddressesRequest', {addresses});
 	}
 	submitTransaction(tx: Rpc.SubmitTransactionRequest){
 		return this.request<Rpc.SubmitTransactionResponse>('submitTransactionRequest', tx);
