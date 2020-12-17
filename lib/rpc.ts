@@ -15,17 +15,21 @@ export class RPC implements IRPC{
 		this.client?.disconnect();
 	}
 
-	subscribe<T>(method:string, data:any, callback:Function){
+	subscribe<T, R>(method:string, data:any, callback:Rpc.callback<R>){
 		return this.client.subscribe<T>(method, data, callback);
 	}
 	request<T>(method:string, data:any){
 		return this.client.call(method, data) as Promise<T>;
 	}
-	subscribeChainChanged(data:any, callback:Function){
-		return this.subscribe<Rpc.NotifyChainChangedResponse>("notifyChainChangedRequest", data, callback);
+
+	subscribeChainChanged(callback:Rpc.callback<Rpc.ChainChangedNotification>){
+		return this.subscribe<Rpc.NotifyChainChangedResponse, Rpc.ChainChangedNotification>("notifyChainChangedRequest", {}, callback);
 	}
-	subscribeBlockAdded(data:any, callback:Function){
-		return this.subscribe<Rpc.NotifyBlockAddedResponse>("notifyBlockAddedRequest", data, callback);
+	subscribeBlockAdded(callback:Rpc.callback<Rpc.BlockAddedNotification>){
+		return this.subscribe<Rpc.NotifyBlockAddedResponse, Rpc.BlockAddedNotification>("notifyBlockAddedRequest", {}, callback);
+	}
+	subscribeVirtualSelectedParentBlueScoreChanged(callback:Rpc.callback<Rpc.VirtualSelectedParentBlueScoreChangedNotification>){
+		return this.subscribe<Rpc.NotifyVirtualSelectedParentBlueScoreChangedResponse, Rpc.VirtualSelectedParentBlueScoreChangedNotification>("notifyVirtualSelectedParentBlueScoreChangedRequest", {}, callback);
 	}
 
 	getBlock(hash:string){
@@ -41,5 +45,9 @@ export class RPC implements IRPC{
 	}
 	submitTransaction(tx: Rpc.SubmitTransactionRequest){
 		return this.request<Rpc.SubmitTransactionResponse>('submitTransactionRequest', tx);
+	}
+
+	getVirtualSelectedParentBlueScore(){
+		return this.request<Rpc.VirtualSelectedParentBlueScoreResponse>('getVirtualSelectedParentBlueScoreRequest', {});
 	}
 }
