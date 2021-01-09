@@ -1,9 +1,9 @@
 {
-  "name": "kaspa-wallet-grpc-node",
+  "name": "kaspa-grpc-node",
   "version": "0.0.1",
   "description": "Node gRPC for kaspa-wallet",
   "main": "dist/index.js",
-  "author": "",
+  "author": "ASPECTRON Inc.",
   "license": "ISC",
   "scripts": {
     "build": "tsc",
