@@ -20,6 +20,7 @@ export namespace RPC {
 		outpoint: Outpoint;
 		utxoEntry: UTXOEntry;
 		transaction: Transaction;
+		isCoinbase:boolean;
 	}
 
 	interface Outpoint{
@@ -27,9 +28,14 @@ export namespace RPC {
 		index: number;
 	}
 
+	interface ScriptPublicKey{
+		version:number;
+		scriptPublicKey:string;
+	}
+
 	interface UTXOEntry{
 		amount: number;
-		scriptPubKey: string;
+		scriptPublicKey: ScriptPublicKey;
 		blockBlueScore: number;
 		isCoinbase: boolean; 
 	}
