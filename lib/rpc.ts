@@ -11,6 +11,12 @@ export class RPC implements IRPC{
 			this.client.connect();
 		}
 	}
+	onConnect(callback:Function){
+		this.client.onConnect(callback);
+	}
+	onDisconnect(callback:Function){
+		this.client.onDisconnect(callback);
+	}
 	disconnect(){
 		this.client?.disconnect();
 	}
