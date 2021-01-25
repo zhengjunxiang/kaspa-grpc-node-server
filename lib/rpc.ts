@@ -26,6 +26,9 @@ export class RPC implements IRPC{
 	disconnect(){
 		this.client?.disconnect();
 	}
+	connect(){
+		return this.client?.connect();
+	}
 	unSubscribe(method:string, uid:string=''){
 		return this.client.unSubscribe(method, uid);
 	}
