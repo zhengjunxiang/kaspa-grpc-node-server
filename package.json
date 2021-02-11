@@ -1,5 +1,5 @@
 {
-  "name": "kaspa-grpc-node",
+  "name": "@kaspa/grpc-node",
   "version": "0.0.1",
   "description": "Node gRPC for kaspa-wallet",
   "main": "dist/index.js",
@@ -8,10 +8,10 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
-    "prepare": "npm run build"
+    "prepublishOnly": "rm -rf ./dist && tsc"
   },
   "dependencies": {
-    "kaspa-grpc": "aspectron/kaspa-grpc"
+    "@kaspa/grpc": "*"
   },
   "devDependencies": {
     "@types/node": "^14.14.9",

@@ -1,4 +1,4 @@
-import {Client} from 'kaspa-grpc';
+import {Client} from '@kaspa/grpc';
 import {IRPC, RPC as Rpc} from '../types/custom-types';
 
 export class RPC implements IRPC{
