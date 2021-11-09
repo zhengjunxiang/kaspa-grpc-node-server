@@ -1,6 +1,7 @@
 import {Client} from '@kaspa/grpc';
 import {IRPC, RPC as Rpc} from '../types/custom-types';
 
+export {Client};
 export class RPC implements IRPC{
 	client:Client;
 	constructor(options:any={}){
