@@ -10,6 +10,7 @@ export class RPC implements IRPC{
 		}else{
 			this.client = new Client(options.clientConfig||{});
 			this.client.connect();
+			// this.client.verbose = true;
 		}
 	}
 	onConnect(callback:Function){
@@ -68,6 +69,9 @@ export class RPC implements IRPC{
 	}
 	getUtxosByAddresses(addresses:string[]){
 		return this.request<Rpc.UTXOsByAddressesResponse>('getUtxosByAddressesRequest', {addresses});
+	}
+	getBalanceByAddress(address:string){
+		return this.request<Rpc.UTXOsByAddressesResponse>('getBalanceByAddressRequest', {address});
 	}
 	submitTransaction(tx: Rpc.SubmitTransactionRequest){
 		return this.request<Rpc.SubmitTransactionResponse>('submitTransactionRequest', tx);
