@@ -23,4 +23,15 @@ route.get("/getUtxosByAddresses", (req, res1) => {
   })
 })
 
+route.post("/submitTransaction", (req, res1) => {
+  const tx = req.body.tx;
+  client.submitTransaction(
+    tx
+  ).then((res) => {
+    return res1.json(res.entries)
+  }).catch(err => {
+    console.error('err', err)
+  })
+})
+
 export default route
