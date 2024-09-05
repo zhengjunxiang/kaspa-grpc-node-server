@@ -1,30 +1,33 @@
-const { Wallet, initKaspaFramework } = require('@kaspa/wallet');
-const { RPC } = require('@kaspa/grpc-node');
+// @ts-nocheck
+// export * from "./lib/rpc";
+import {RPC} from './lib/rpc'
 
-(async () => {
-  await initKaspaFramework();
-  const network = "kaspatest";
-  // const port = Wallet.networkTypes[network].port; // default port for testnet
+const express = require('express')
+const bodyParser = require('body-parser')
+const cors = require('cors')
+import apiRoute from "./routes/index"
 
-  const rpc = new RPC({ clientConfig:{ host : '13.213.9.146:16310' } });
+const app = express()
 
-  const wallet = Wallet.fromMnemonic(
-      "father term enlist tone impact hard prison whale inhale drive range nasty tenant acid oven city recall canyon again smile gallery social chuckle tobacco",
-      { network, rpc },
-      {disableAddressDerivation:true}
-  );
-  try {
-    let response = await wallet.submitTransaction({
-        address: 'kaspatest:qrr28334xft4s47ttn6dhclwez3veh5vs8ws8et4u2t74y65jrznzly8sj2mp', // destination address
-        amount: 100000000,  // amount in base units
-        fee: 100000000,     // user fees
-    });
-    if(!response)
-      console.log('general error');  // if kaspad returns null (should never occur)
-    else
-      console.log('success:', response);
-  } catch(ex) {
-    console.log('error:',ex);
+app.use(express.json())
+app.use(cors())
+// app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use("/api", apiRoute)
+
+global.client = new RPC({
+  clientConfig: {
+    host: "13.213.9.146:16310" // test10
+    // host: "13.213.9.146:16110" // main
   }
-})();
+});
+
+client.onConnect(() => {
+  console.log('onConnect')
+});
+
+app.listen(8090, async () => {
+  console.log("Listening on port 8090")
+})
 

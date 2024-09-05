@@ -7,7 +7,7 @@
   "license": "ISC",
   "scripts": {
     "watch": "tsc --watch",
-    "start": "nodemon --watch dist --exec node dist/index.js",
+    "start": "nodemon --watch dist --exec node dist/index11.js",
     "prepublishOnly": "rm -rf ./dist && rm -f package-lock.json && npm install --also=dev && tsc"
   },
   "devDependencies": {
@@ -24,6 +24,7 @@
     "tsconfig.json"
   ],
   "dependencies": {
+    "@kaspa/core-lib": "^1.6.5",
     "@kaspa/grpc": "^1.4.0",
     "@kaspa/grpc-node": "^1.0.8",
     "@kaspa/wallet": "^1.4.26",
