@@ -25,12 +25,18 @@ route.get("/getUtxosByAddresses", (req, res1) => {
 
 route.post("/submitTransaction", (req, res1) => {
   const tx = req.body.tx;
+
   client.submitTransaction(
-    tx
+    JSON.parse(tx)
   ).then((res) => {
+    if (!res.transactionId) {
+      throw new Error(res.error.message)
+    }
+    console.log('res', res)
     return res1.json(res.entries)
   }).catch(err => {
     console.error('err', err)
+    res1.status(400).json({ error: err.message });
   })
 })
 
