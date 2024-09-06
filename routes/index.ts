@@ -32,8 +32,7 @@ route.post("/submitTransaction", (req, res1) => {
     if (!res.transactionId) {
       throw new Error(res.error.message)
     }
-    console.log('res', res)
-    return res1.json(res.entries)
+    return res1.json(res)
   }).catch(err => {
     console.error('err', err)
     res1.status(400).json({ error: err.message });

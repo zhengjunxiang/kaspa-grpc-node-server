@@ -18,8 +18,8 @@ app.use("/api", apiRoute)
 
 global.client = new RPC({
   clientConfig: {
-    // host: "13.213.9.146:16310" // test10
-    host: "13.213.9.146:16110" // main
+    host: "13.213.9.146:16310" // test10
+    // host: "13.213.9.146:16110" // main
   }
 });
 
